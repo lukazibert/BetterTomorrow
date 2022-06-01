@@ -1,0 +1,33 @@
+{
+  "name": "cms",
+  "version": "1.0.0",
+  "description": "Sistemi3 - BetterTomorrow",
+  "main": "index.js",
+  "scripts": {
+    "test": "text"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/lukazibert/BetterTomorrow.git"
+  },
+  "keywords": [
+    "Sis3-project"
+  ],
+  "author": "Luka Žibert",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/lukazibert/BetterTomorrow/issues"
+  },
+  "homepage": "https://github.com/lukazibert/BetterTomorrow#readme",
+  "dependencies": {
+    "axios": "^0.27.2",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "create-react-app": "^5.0.1",
+    "dotenv": "^16.0.1",
+    "express": "^4.18.1",
+    "express-session": "^1.17.3",
+    "mysql2": "^2.3.3",
+    "react": "^18.1.0"
+  }
+}
