@@ -1,5 +1,5 @@
 const mysql = require("mysql2");
-const { resolve } = require("path");
+// const { resolve } = require("path");
 // const therapy = require("../routes/therapy");
 
 //database config
@@ -158,6 +158,38 @@ dataPool.GetWorkerTherapies = (id) => {
     conn.query(
       `SELECT * FROM therapies WHERE worker_id = ?`,
       id,
+      (err, res) => {
+        return err ? reject(err) : resolve(res);
+      }
+    );
+  });
+};
+
+dataPool.get_messages = (group_id) => {
+  return new Promise((resolve, reject) => {
+    conn.query(
+      `SELECT * FROM messages WHERE group_id = ? ORDER BY data_time ASC`,
+      group_id,
+      (err, res) => {
+        return err ? reject(err) : resolve(res);
+      }
+    );
+  });
+};
+
+dataPool.update_user = (
+  id,
+  username,
+  gender,
+  age,
+  height,
+  weight,
+  pain_levels
+) => {
+  return new Promise((resolve, reject) => {
+    conn.query(
+      `UPDATE user_login SET username = ?, gender = ?, age = ?, height = ?, weight = ?, pain_levels = ? WHERE id = ?`,
+      [username, gender, age, height, weight, pain_levels, id],
       (err, res) => {
         return err ? reject(err) : resolve(res);
       }

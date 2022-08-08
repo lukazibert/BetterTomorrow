@@ -5,11 +5,15 @@ const DB = require("../DB/dbConnection.js");
 
 // users.use(
 //   session({
-//     secret: "somesecret",
+//     key: "user",
+//     secret: "some secret",
+//     saveUninitialized: true,
+//     name: "User session",
 //     resave: false,
-//     saveUninitialized: false,
-//     cookies: {
-//       expires: 60 * 2,
+//     cookie: {
+//       secure: false,
+//       expires: 1000 * 60 * 60 * 24,
+//       sameSite: false,
 //     },
 //   })
 // );
@@ -50,6 +54,37 @@ users.post("/register", async (req, res) => {
     res.send("A field is missing!");
   }
 
+  res.end();
+});
+
+users.post("/update", async (req, res) => {
+  let id = req.body.id;
+  let username = req.body.username;
+  let gender = req.body.gender;
+  let age = req.body.age;
+  let height = req.body.height;
+  let weight = req.body.weight;
+  let pain_levels = req.body.pain_levels;
+  console.log("pain", pain_levels);
+
+  try {
+    let query_results = await DB.update_user(
+      id,
+      username,
+      gender,
+      age,
+      height,
+      weight,
+      pain_levels
+    );
+    console.log(query_results);
+    res.send(query_results);
+    // res.sendStatus(200);
+  } catch (error) {
+    // res.sendStatus(500);
+    res.send(error);
+    // console.log(error);
+  }
   res.end();
 });
 

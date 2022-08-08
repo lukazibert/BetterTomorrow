@@ -3,6 +3,7 @@ import React from "react";
 import LogInView from "./views/LogInView";
 import HomeView from "./views/HomeView";
 import axios from "axios";
+import ChatView from "./views/ChatView";
 // import axios from "axios";
 
 class App extends React.Component {
@@ -15,9 +16,18 @@ class App extends React.Component {
   }
 
   componentDidMount() {
-    axios.get("http://88.200.63.148:5111/login").then((response) => {
-      console.log("COmponent did mount: ", response);
-    });
+    axios
+      .get("http://88.200.63.148:5111/login/get_session")
+      .then((response) => {
+        console.log("COmponent did mount: ", response);
+        if (response.logged) {
+          this.setState({
+            user: response.user,
+            logged: response.logged,
+          });
+        }
+        console.log("State", this.state);
+      });
   }
 
   QLogOut = () => {

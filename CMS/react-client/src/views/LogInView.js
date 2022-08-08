@@ -42,8 +42,8 @@ class LogInView extends React.Component {
   };
   render() {
     return (
-      <div className="container-fluid">
-        <div className="container-fluid bg-primary p-3 text-center">
+      <div>
+        <div className="bg-primary p-3 text-center">
           <div className="display-1 text-white">BetterTomorrow</div>
         </div>
         <div className="container text-center">

@@ -39,14 +39,14 @@ app.use(
 const users = require("./routes/users");
 const workers = require("./routes/workers");
 const forum = require("./routes/forum");
-// const chat = require("./routes/chat");
+const chat = require("./routes/chat");
 const therapy = require("./routes/therapy");
 const login = require("./routes/login");
 
 app.use("/users", users);
 app.use("/workers", workers);
 app.use("/forum", forum);
-// app.use("/chat", chat);
+app.use("/chat", chat);
 app.use("/therapy", therapy);
 app.use("/login", login);
 

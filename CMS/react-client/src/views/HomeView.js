@@ -3,8 +3,9 @@ import ForumView from "./ForumView";
 import NavBar from "./NavBar";
 import AccountView from "./AccountView";
 import TherapyView from "./TherapyView";
-import ChatView from "./ChatView";
+import ChatLibraryView from "./ChatLibraryView";
 import CreatePost from "./components/CreatePostForm";
+import ChatView from "./ChatView";
 
 class HomeView extends React.Component {
   constructor(props) {
@@ -40,7 +41,8 @@ class HomeView extends React.Component {
       case "therapy":
         return <TherapyView user={this.props.user} />;
       case "chat":
-        return <ChatView user={this.props.user} />;
+        // return <ChatLibraryView />;
+        return <ChatView />;
       case "create_post":
         return <CreatePost QBack={this.QSetView} user={this.props.user} />;
     }
