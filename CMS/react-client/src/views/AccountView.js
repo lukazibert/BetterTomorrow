@@ -1,3 +1,4 @@
+import axios from "axios";
 import React from "react";
 import DefaultIcon from "../assets/user-icon.svg";
 import EditAccountView from "./EditAccountView";
@@ -8,28 +9,55 @@ class AccountView extends React.Component {
     this.state = {
       user: {},
       edit: false,
-      pain_sliders: [
-        { name: "(sample) Bolečina v ledveni hrbtenici (1-10)", value: 10 },
-      ],
+      pain_sliders: [],
     };
   }
   componentDidMount() {
-    console.log(this.props.user.pain_levels);
-    this.setState({
-      user: this.props.user,
-      pain_sliders: JSON.parse(this.props.user.pain_levels),
-    });
+    // console.log("called");
+    // console.log(this.props.user.pain_levels);
+    // this.setState({
+    //   user: this.props.user,
+    //   pain_sliders: JSON.parse(this.props.user.pain_levels),
+    // });
+    axios
+      .post("/users/get_acc_data", { username: this.props.user.username })
+      .then((response) => {
+        console.log("get res", response.data);
+        this.setState({
+          user: response.data,
+          pain_sliders: JSON.parse(response.data.pain_levels),
+        });
+      });
   }
+
+  QSetEdit = async () => {
+    this.setState({ edit: false });
+    await this.componentDidMount();
+  };
+
+  // componentDidUpdate() {
+  //   axios
+  //     .post("/users/get_acc_data", { username: this.props.user.username })
+  //     .then((response) => {
+  //       console.log("get res", response.data);
+  //       this.setState({
+  //         user: response.data,
+  //         pain_sliders: JSON.parse(response.data.pain_levels),
+  //       });
+  //     });
+  // }
 
   render() {
     if (this.state.edit) {
       return (
         <EditAccountView
-          user={this.props.user}
+          user={this.state.user}
           edit={() => {
-            this.setState({ edit: false });
-            this.componentDidMount();
+            this.QSetEdit();
+
+            // this.componentDidMount();
           }}
+          QUpdateUser={this.props.QUpdateUser}
         />
       );
     } else {
@@ -38,11 +66,7 @@ class AccountView extends React.Component {
           <div className="row">
             <div className="col-3 m-3" style={{ height: 300, width: 300 }}>
               <img
-                src={
-                  this.state.user.profile_photo === null
-                    ? DefaultIcon
-                    : this.state.user.profile_photo
-                }
+                src={DefaultIcon}
                 alt=""
                 className="card-img-left rounded"
                 style={{
@@ -54,7 +78,7 @@ class AccountView extends React.Component {
             </div>
             <div className="col-4 m-2">
               <div className="h1">{this.state.user.username}</div>
-              <div className="text-secondary">{this.state.user.username}</div>
+              {/* <div className="text-secondary">{this.state.user.username}</div> */}
               <div className="row mt-4">
                 <div className="col-2">
                   <div className="text-dark" id="gender">
@@ -70,7 +94,7 @@ class AccountView extends React.Component {
                     Teža:
                   </div>
                 </div>
-                <div className="col-3 ms-2">
+                <div className="col-4 ms-2">
                   <div className="text-secondary" id="gender">
                     {this.state.user.gender}
                   </div>
@@ -101,14 +125,14 @@ class AccountView extends React.Component {
             </div>
           </div>
           <div className="d-flex flex-column">
-            {this.state.pain_sliders.map((el) => (
+            {this.state.pain_sliders.map((el, index) => (
               <div className="">
                 <lable className="form-label text-secondary">{el.name}</lable>
                 <div className="d-flex flex-row w-100 align-items-center">
                   <input
                     type="range"
                     className="range m-2 w-100"
-                    id={el}
+                    id={index}
                     min="1"
                     max="10"
                     step="1"

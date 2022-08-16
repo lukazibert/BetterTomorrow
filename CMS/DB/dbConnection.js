@@ -1,4 +1,5 @@
 const mysql = require("mysql2");
+const { resolve } = require("path");
 // const { resolve } = require("path");
 // const therapy = require("../routes/therapy");
 
@@ -89,19 +90,37 @@ dataPool.AuthWorker = (username) => {
 dataPool.AddUser = (username, email, password) => {
   return new Promise((resolve, reject) => {
     conn.query(
-      `INSERT INTO user_login (username,email,password,profile_photo,gender,age,height,weight) VALUES (?,?,?,?,?,?,?,?)`,
-      [username, email, password, "", "", 0, 0, 0],
+      `INSERT INTO user_login (username,email,password,gender,age,height,weight,therapies,pain_levels) VALUES (?,?,?,?,?,?,?,?,?)`,
+      [
+        username,
+        email,
+        password,
+        "moški/ženska",
+        0,
+        0,
+        0,
+        "[]",
+        `[{"name":"(sample) Bolečina v ledveni hrbtenici (1-10)","value":10}]`,
+      ],
       (err, res) => {
         return err ? reject(err) : resolve(res);
       }
     );
   });
 };
-dataPool.AddWorker = (username, email, password, photo_url, profession) => {
+dataPool.AddWorker = (username, email, password, profession) => {
   return new Promise((resolve, reject) => {
     conn.query(
-      `INSERT INTO worker_login (username,email,password,profile_photo,profession) VALUES (?,?,?,?,?)`,
-      [username, email, password, photo_url, profession],
+      `INSERT INTO worker_login (username,email,password,profession,description,links,therapies) VALUES (?,?,?,?,?,?,?)`,
+      [
+        username,
+        email,
+        password,
+        profession,
+        `[{"label":"Sample Description Label","data":"Lorem aute occaecat deserundunt sint ullamco eiusmod. Ex ut id cillum duis."}]`,
+        `[{"label":"Sample Link Label","data":"https://sample_link.com"}]`,
+        `[]`,
+      ],
       (err, res, fields) => {
         return err ? reject(err) : resolve(res);
       }
@@ -168,7 +187,7 @@ dataPool.GetWorkerTherapies = (id) => {
 dataPool.get_messages = (group_id) => {
   return new Promise((resolve, reject) => {
     conn.query(
-      `SELECT * FROM messages WHERE group_id = ? ORDER BY data_time ASC`,
+      `SELECT * FROM messages WHERE group_id = ?`,
       group_id,
       (err, res) => {
         return err ? reject(err) : resolve(res);
@@ -191,6 +210,121 @@ dataPool.update_user = (
       `UPDATE user_login SET username = ?, gender = ?, age = ?, height = ?, weight = ?, pain_levels = ? WHERE id = ?`,
       [username, gender, age, height, weight, pain_levels, id],
       (err, res) => {
+        return err ? reject(err) : resolve(res);
+      }
+    );
+  });
+};
+
+dataPool.update_worker = (id, username, profession, description, links) => {
+  return new Promise((resolve, reject) => {
+    conn.query(
+      `UPDATE worker_login SET username = ?, profession = ?, description = ?, links = ? WHERE id = ?`,
+      [username, profession, description, links, id],
+      (err, res) => {
+        return err ? reject(err) : resolve(res);
+      }
+    );
+  });
+};
+
+dataPool.postTherapy = (
+  worker_id,
+  title,
+  description,
+  photo_url,
+  link1,
+  link2,
+  link3
+) => {
+  return new Promise((resolve, reject) => {
+    conn.query(
+      `INSERT INTO therapies (worker_id, title, description, photo_url, link1, link2, link3, users) VALUES (?,?,?,?,?,?,?, ?)`,
+      [worker_id, title, description, photo_url, link1, link2, link3, "[]"],
+      (err, res) => {
+        return err ? reject(err) : resolve(res);
+      }
+    );
+  });
+};
+
+dataPool.getTherapyById = (id) => {
+  return new Promise((resolve, reject) => {
+    conn.query(`SELECT * FROM therapies WHERE id = ?`, id, (err, res) => {
+      return err ? reject(err) : resolve(res);
+    });
+  });
+};
+
+dataPool.updateTherapyList = (list, id) => {
+  return new Promise((resolve, reject) => {
+    conn.query(
+      `UPDATE worker_login SET therapies = ? WHERE id = ?`,
+      [list, id],
+      (err, res) => {
+        return err ? reject(err) : resolve(res);
+      }
+    );
+  });
+};
+
+dataPool.updateUserTherapyList = (list, id) => {
+  return new Promise((resolve, reject) => {
+    conn.query(
+      `UPDATE user_login SET therapies = ? WHERE id = ?`,
+      [list, id],
+      (err, res) => {
+        return err ? reject(err) : resolve(res);
+      }
+    );
+  });
+};
+dataPool.updateTherapyTherapyList = (list, id) => {
+  return new Promise((resolve, reject) => {
+    conn.query(
+      `UPDATE therapies SET users = ? WHERE id = ?`,
+      [list, id],
+      (err, res) => {
+        return err ? reject(err) : resolve(res);
+      }
+    );
+  });
+};
+dataPool.getSingedUsers = (id) => {
+  return new Promise((resolve, reject) => {
+    conn.query(`SELECT * FROM user_login WHERE id = ?`, id, (err, res) => {
+      return err ? reject(err) : resolve(res);
+    });
+  });
+};
+
+dataPool.getUserByID = (id) => {
+  return new Promise((resolve, reject) => {
+    conn.query(
+      "SELECT * FROM user_login WHERE id = ?",
+      id,
+      (err, res, fields) => {
+        return err ? reject(err) : resolve(res);
+      }
+    );
+  });
+};
+
+dataPool.updateTherapy = (
+  id,
+  // worker_id,
+  title,
+  description,
+  // photo_url,
+  link1,
+  link2,
+  link3
+) => {
+  return new Promise((resolve, reject) => {
+    conn.query(
+      `UPDATE therapies SET title = ?, description = ?, link1 = ?, link2 = ?, link3 = ? WHERE id = ?`,
+      [title, description, link1, link2, link3, id],
+      (err, res, fields) => {
         return err ? reject(err) : resolve(res);
       }
     );

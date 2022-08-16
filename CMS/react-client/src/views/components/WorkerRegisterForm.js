@@ -92,7 +92,6 @@ class WorkerRegisterForm extends React.Component {
               name="profession"
               type="text"
               className="form-control"
-              id="exampleInputEmail1"
               onChange={(e) => this.QGetTextFromField(e)}
             />
           </div>

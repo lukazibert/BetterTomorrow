@@ -42,7 +42,7 @@ users.post("/register", async (req, res) => {
             console.log("saving session ", req.session);
           });
           res.send(req.session.user);
-          res.send(authUser);
+          // res.send(authUser);
         }
       }
     } catch (err) {
@@ -86,6 +86,54 @@ users.post("/update", async (req, res) => {
     // console.log(error);
   }
   res.end();
+});
+
+users.post("/get_acc_data", async (req, res) => {
+  let username = req.body.username;
+  console.log("username: ", username);
+  try {
+    let queryUser = await DB.AuthUser(username);
+    console.log("qUser: ", queryUser);
+
+    queryUser[0].type = "user";
+    res.send(queryUser[0]);
+  } catch (error) {
+    res.sendStatus(200);
+  }
+  res.end();
+});
+
+users.post("/get_acc_data_by_id", async (req, res) => {
+  let id = req.body.id;
+  // console.log("username: ", username);
+  try {
+    let queryUser = await DB.getUserByID(id);
+    console.log("qUser: ", queryUser);
+
+    // queryUser[0].type = "user";
+    res.send(queryUser[0]);
+  } catch (error) {
+    res.sendStatus(200);
+  }
+  res.end();
+});
+
+users.post("/update_therapy_list", async (req, res) => {
+  let user_id = req.body.id;
+  let therapy_id = req.body.therapy_id;
+
+  try {
+    let user_therapy_list = await DB.getUserByID(user_id);
+    let list = JSON.parse(user_therapy_list[0].therapies);
+    list.push(therapy_id);
+    console.log(list);
+    list = JSON.stringify(list);
+    let query = await DB.updateUserTherapyList(list, user_id);
+    console.log("result: ", query);
+    res.send(query);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 module.exports = users;

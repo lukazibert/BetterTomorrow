@@ -42,7 +42,7 @@ workers.post("/register", async (req, res) => {
           username,
           email,
           password,
-          photo_url,
+          // photo_url,
           profession
         );
         if (queryResult.affectedRows) {
@@ -64,6 +64,93 @@ workers.post("/register", async (req, res) => {
     console.log("A field is missing!");
   }
 
+  res.end();
+});
+
+workers.post("/update", async (req, res) => {
+  let id = req.body.user.id;
+  let username = req.body.user.username;
+  let profession = req.body.user.profession;
+  let description = JSON.stringify(req.body.user.description);
+  let links = JSON.stringify(req.body.user.links);
+  // let therapies
+
+  try {
+    let query_results = await DB.update_worker(
+      id,
+      username,
+      profession,
+      description,
+      links
+    );
+    console.log(query_results);
+    res.send(query_results);
+    // res.sendStatus(200);
+  } catch (error) {
+    // res.sendStatus(500);
+    res.send(error);
+    // console.log(error);
+  }
+  res.end();
+});
+workers.post("/get_search", async (req, res) => {
+  let username = req.body.username;
+  // console.log("username: ", username);
+  try {
+    let query_results = await DB.AuthWorker(username);
+    res.send(query_results);
+    // console.log("worker search: ", query_results);
+  } catch (error) {
+    console.log(error);
+  }
+  res.end();
+});
+
+workers.post("/get_acc_data", async (req, res) => {
+  let username = req.body.username;
+  console.log("username: ", username);
+  try {
+    let queryUser = await DB.AuthWorker(username);
+
+    console.log("qUser: ", queryUser[0].therapies);
+    let arr = JSON.parse(queryUser[0].therapies);
+    let therapies = await Promise.all(
+      arr.map(async (i) => {
+        let therapy = await DB.getTherapyById(i);
+        return therapy[0];
+      })
+    );
+
+    queryUser[0].type = "worker";
+    queryUser[0].therapies = therapies;
+    res.send(queryUser[0]);
+  } catch (error) {
+    res.sendStatus(200);
+  }
+  res.end();
+});
+workers.post("/get_acc_data_by_id", async (req, res) => {
+  let id = req.body.id;
+  // console.log("username: ", username);
+  try {
+    let queryUser = await DB.getByID(id);
+    console.log("qUser: ", queryUser);
+    let arr = JSON.parse(queryUser[0].therapies);
+
+    let therapies = await Promise.all(
+      arr.map(async (i) => {
+        let therapy = await DB.getTherapyById(i);
+        return therapy[0];
+      })
+    );
+
+    // queryUser[0].type = "worker";
+    queryUser[0].therapies = therapies;
+    // queryUser[0].type = "user";
+    res.send(queryUser[0]);
+  } catch (error) {
+    res.sendStatus(200);
+  }
   res.end();
 });
 

@@ -20,9 +20,7 @@ class EditAccountView extends React.Component {
   componentDidMount() {
     this.setState({
       user: this.props.user,
-      pain_sliders: this.props.user.pain_levels
-        ? JSON.parse(this.props.user.pain_levels)
-        : [{ name: "(sample) Bolečina v ledveni hrbtenici (1-10)", value: 10 }],
+      pain_sliders: JSON.parse(this.props.user.pain_levels),
     });
   }
 
@@ -36,34 +34,35 @@ class EditAccountView extends React.Component {
     console.log("id: ", e.target.id);
     console.log("value: ", e.target.value);
     this.setState((prevState) => ({
-      pain_sliders: prevState.pain_sliders.map(
-        (el, index) => {
-          if (index == e.target.id) {
-            return { ...el, name: e.target.value };
-          } else {
-            return el;
-          }
+      pain_sliders: prevState.pain_sliders.map((el, index) => {
+        if (index == e.target.id) {
+          return { ...el, name: e.target.value };
+        } else {
+          return el;
         }
-        // index === e.target.id ? { ...el, name: e.target.value } : el
-      ),
+      }),
     }));
-    // console.log(this.state.pain_sliders[e.target.id].name);
   };
 
   QSetNewValue = (e) => {
     this.setState((prevState) => ({
-      pain_sliders: prevState.pain_sliders.map((el, index) =>
-        index == e.target.id ? { ...el, value: e.target.value } : el
-      ),
+      pain_sliders: prevState.pain_sliders.map((el, index) => {
+        if (index == e.target.id) {
+          return { ...el, value: e.target.value };
+        } else {
+          return el;
+        }
+      }),
     }));
   };
 
   QRemovePainMeasure = (i) => {
+    console.log(i);
     this.setState((prevState) => ({
       pain_sliders: prevState.pain_sliders.filter((el, index) => {
-        if (index !== i) {
-          return el;
-        }
+        console.log("index: ", index);
+        console.log(index == i);
+        return index != i;
       }),
     }));
   };
@@ -86,6 +85,11 @@ class EditAccountView extends React.Component {
         console.log(response);
         this.props.edit();
       });
+
+    this.setState((prevState) => ({
+      user: { ...prevState.user, pain_levels: pain },
+    }));
+    this.props.QUpdateUser(this.state.user);
   };
 
   render() {
@@ -94,11 +98,7 @@ class EditAccountView extends React.Component {
         <div className="row">
           <div className="col-3 m-3" style={{ height: 300, width: 300 }}>
             <img
-              src={
-                this.state.user.profile_photo != null
-                  ? DefaultIcon
-                  : this.state.user.profile_photo
-              }
+              src={DefaultIcon}
               alt=""
               className="card-img-left rounded"
               style={{
@@ -110,14 +110,7 @@ class EditAccountView extends React.Component {
           </div>
           <div className="col-4 m-2">
             {/* <div className="h1">{this.state.user.username}</div> */}
-            <input
-              type="text"
-              name="username"
-              id=""
-              defaultValue={this.state.user.username}
-              className="form-control-lg w-100"
-              onChange={(e) => this.QGetTextFromField(e)}
-            />
+            <div className="h1">{this.props.user.username}</div>
             {/* <div className="text-secondary">{this.state.user.username}</div> */}
             <div className="d-flex flex-column align-item-between mt-3">
               <div className="d-flex flex-row my-1 alight-items-center">
@@ -129,7 +122,7 @@ class EditAccountView extends React.Component {
                   name="gender"
                   id=""
                   className="form-control ms-2"
-                  defaultValue={this.state.user.gender || "Spol"}
+                  defaultValue={this.state.user.gender}
                   onChange={(e) => this.QGetTextFromField(e)}
                 />
               </div>

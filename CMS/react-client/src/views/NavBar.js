@@ -5,6 +5,7 @@ class NavBar extends React.Component {
     super();
     this.state = {
       currentView: "forum",
+      search_data: "",
     };
   }
 
@@ -17,6 +18,12 @@ class NavBar extends React.Component {
 
   QIsActive = (is) => {
     return is == this.state.currentView ? "active" : "";
+  };
+
+  QGetSearchInput = (e) => {
+    this.setState({
+      search_data: e.target.value,
+    });
   };
   render() {
     return (
@@ -56,7 +63,7 @@ class NavBar extends React.Component {
               Profil
             </a>
           </li>
-          <li className="nav-item">
+          {/* <li className="nav-item">
             <a
               href="#"
               onClick={() => this.QChangeView("chat")}
@@ -66,27 +73,33 @@ class NavBar extends React.Component {
             >
               Pogovori
             </a>
-          </li>
+          </li> */}
         </ul>
         <div className="nav-item ms-auto">
-          <form action="#" className="form-inline mt-2">
-            <div className="input-group">
-              <input
-                type="text"
-                className="form-control"
-                placeholder="Search"
-                name="search"
-              />
-              <div className="input-group-btn">
-                <button
-                  className="btn btn-outline-primary m-3 my-sm-0"
-                  type="submit"
-                >
-                  Search
-                </button>
-              </div>
+          <div className="input-group">
+            <input
+              type="text"
+              className="form-control"
+              placeholder="Search"
+              name="search"
+              onChange={async (e) => {
+                await this.QGetSearchInput(e);
+                // console.log(e.target.value);
+                console.log(this.state.search_data);
+              }}
+            />
+            <div className="input-group-btn">
+              <button
+                className="btn btn-outline-primary m-3 my-sm-0"
+                // type="submit"
+                onClick={() =>
+                  this.props.QSetSearchData(this.state.search_data)
+                }
+              >
+                Search
+              </button>
             </div>
-          </form>
+          </div>
         </div>
       </nav>
     );

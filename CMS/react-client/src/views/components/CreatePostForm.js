@@ -62,11 +62,7 @@ class CreatePost extends React.Component {
           <div className="card">
             <div className="card-header d-flex flex-row">
               <img
-                src={
-                  this.state.user.profile_photo.data.length === 0
-                    ? DefaultIcon
-                    : this.state.user.profile_photo
-                }
+                src={DefaultIcon}
                 height={40}
                 width={40}
                 alt="..."

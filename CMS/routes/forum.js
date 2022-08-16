@@ -1,15 +1,16 @@
 const { constants } = require("buffer");
 const express = require("express");
+const { resourceLimits } = require("worker_threads");
 const forum = express.Router();
 const DB = require("../DB/dbConnection.js");
 
 //Gets all the news in the DB
 forum.get("/", async (req, res, next) => {
   try {
-    var queryResult = await DB.forumPosts();
-    var result = await Promise.all(
+    let queryResult = await DB.forumPosts();
+    let result = await Promise.all(
       queryResult.map(async (i) => {
-        var creator = await DB.getByID(i.creator_id);
+        let creator = await DB.getByID(i.creator_id);
         i.creator_name = creator[0].username;
         i.profile_photo = creator[0].profile_photo;
         return i;

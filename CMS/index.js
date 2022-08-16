@@ -6,10 +6,11 @@ const session = require("express-session");
 
 const app = express();
 const port = 5111;
-
 const DB = require("./DB/dbConnection");
 
 //Configs
+app.use(express.static("react-client/build"));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
@@ -19,10 +20,9 @@ app.use(
     credentials: true,
   })
 );
-app.use(cookieParser("some secret"));
+app.use(cookieParser());
 app.use(
   session({
-    key: "user",
     secret: "some secret",
     saveUninitialized: true,
     name: "User session",
@@ -34,6 +34,17 @@ app.use(
     },
   })
 );
+
+app.get("/", (req, res) => {
+  res.sendFile(
+    path.join(__dirname, "react-client/build", "index.html"),
+    null,
+    function (err) {
+      console.log(err);
+      res.end();
+    }
+  );
+});
 
 //Routes
 const users = require("./routes/users");

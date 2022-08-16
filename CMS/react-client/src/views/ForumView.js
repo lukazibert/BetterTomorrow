@@ -31,13 +31,12 @@ class ForumView extends React.Component {
             data.map((d) => {
               return (
                 <div className="card m-2" key={d.id}>
-                  <div className="card-header d-flex flex-row">
+                  <div
+                    className="card-header d-flex flex-row btn"
+                    onClick={() => this.props.QVisitWorkerAccount(d.creator_id)}
+                  >
                     <img
-                      src={
-                        d.profile_photo.data.length === 0
-                          ? DefaultIcon
-                          : URL.createObjectURL(d.profile_photo)
-                      }
+                      src={DefaultIcon}
                       height={40}
                       width={40}
                       alt="..."
